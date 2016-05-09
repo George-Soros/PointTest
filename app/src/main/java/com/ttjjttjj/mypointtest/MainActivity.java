@@ -6,8 +6,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.TextView;
 
@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setFloatBtn();
+//        setFloatBtn();
 
         ButterKnife.bind(this);
 
@@ -49,6 +49,9 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 该方法中获取view的坐标才不会为0
+     *
+     * 注意：View的坐标系统是相对于父控件而言的.
+     *
      * @param hasFocus
      */
     @Override
@@ -66,10 +69,43 @@ public class MainActivity extends AppCompatActivity {
         int W = metric.widthPixels;
         int H = metric.heightPixels;
         float density = metric.density;  // 屏幕密度（0.75 / 1.0 / 1.5）
-        txt3.setText("说明:\n运行设备Width = " + W+",Height = " + H+",density="+density+",\n该图中第二个txt显示的left=48px" +
+        txt3.setText("说明:\n运行设备Width = " + W + ",Height = " + H + ",density=" + density + ",\n该图中第二个txt显示的left=48px" +
                 "它是由16*3=48来的，其中16是布局中到左边的距离16dp，其中3是获取到的desity=3，" +
                 "其他的想计算dp的值，只需要那获取的px值除以3就行了");
 
+    }
+
+    private void testGetXYRawXY(){
+
+    }
+
+    /**
+     * 点击获取当前位置点的坐标
+     * 其中getX，getY，和getRawX，getRawY是不同的
+     *
+     *   event.getX();   event.getY();    //触摸点相对于其所在组件坐标系的坐标
+     *   event.getRawX(); event.getRawY();   //触摸点相对于屏幕默认坐标系的坐标
+     * @param event
+     * @return
+     */
+    @Override
+    public boolean onTouchEvent(final MotionEvent event) {
+
+        Log.d("MainActivity", "event.getX()=" + event.getX() + ",event.getY()=" + event.getY()
+                + ",event.getRawX()=" + event.getRawX() + ",event.getRawY()=" + event.getRawY());
+
+        //点击右下角浮动的，可以显示当前的位置
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "event.getX()=" + event.getX() + ",event.getY()=" + event.getY()
+                        + ",event.getRawX()=" + event.getRawX() + ",event.getRawY()=" + event.getRawY(), Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        return super.onTouchEvent(event);
     }
 
     private void setFloatBtn(){
@@ -83,25 +119,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
-        return super.onOptionsItemSelected(item);
-    }
 }
